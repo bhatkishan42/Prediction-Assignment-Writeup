@@ -3,17 +3,17 @@ title: "Prediction Assignment Writeup"
 author: "kishan bhat"
 ---
 
-##Overview
+## Overview
 The goal of this project is to predict the manner in which they did the exercise. This is the “classe” variable in the training set. This report describes how data was cleaned, how I split “pml-training.csv” into train set and test set, and some of models are investigated.
 
-##Exercise
+## Exercise
 
-#1. Loading add-on package and set seed
+# 1. Loading add-on package and set seed
 ```{r echo=FALSE}
 set.seed(12345)
 library(caret)
 ```
-#2. Download rawdata and submit_data
+# 2. Download rawdata and submit_data
 ```{r echo=FALSE}
 atr <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 ate <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
@@ -39,13 +39,13 @@ df_wo_NA <- rawdata[colname]
 #The last colname is "classe"
 is.element(colname, colnames(submit_data))
 ```
-#4. Split data into random train and test
+# 4. Split data into random train and test
 ```{r echo=TRUE}
 inTrain = createDataPartition(df_wo_NA$classe, p = 3/4)[[1]]
 training = df_wo_NA[ inTrain,]
 testing = df_wo_NA[-inTrain,]
 ```
-#5. Random Forest
+# 5. Random Forest
 It takes a very long time for training, but it has a high accuracy.
 ```{r echo=TRUE}
 model_rf <- train(classe ~ ., data = training, method = "rf")
@@ -53,7 +53,7 @@ pred_rf <- predict(model_rf, testing)
 confusionMatrix(testing$classe, pred_rf)
 ```
 
-#6. Liner Discriminant Analysis
+# 6. Liner Discriminant Analysis
 It takes a short time but poor accuracy.
 ```{r echo=TRUE}
 model_lda <- train(classe ~ ., data = training, method = "lda")
@@ -61,7 +61,7 @@ pred_lda <- predict(model_lda, testing)
 confusionMatrix(testing$classe, pred_lda)
 ```
 
-#7. Recursive Partitioning and Regression Trees
+# 7. Recursive Partitioning and Regression Trees
 The results can be confirmed visually, but poor accuracy.
 ```{r echo=TRUE}
 model_rpart <- train(classe ~ ., data = training, method = "rpart")
@@ -76,7 +76,7 @@ fancyRpartPlot(model_rpart$finalModel)
 
 
 
-#8. Submit data with Random Forest
+# 8. Submit data with Random Forest
 We can use the high accuracy model to submit data. In this report the Random Forest accuracy has the highest value 99.45. We can show the prediction.
 ```{r echo=TRUE}
 submit_rf <- predict(model_rf, submit_data)
