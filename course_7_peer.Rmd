@@ -1,0 +1,73 @@
+---
+title: "course_7_peer"
+author: "kishan bhat"
+date: "August 29, 2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Introduction**
+
+*You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:*
+
+.*Is an automatic or manual transmission better for MPG*
+.*Quantify the MPG difference between automatic and manual transmissions*
+
+##Loading Data
+
+```{r  echo=FALSE}
+library(datasets)
+data(mtcars)
+head(mtcars)
+summary(mtcars)
+```
+##Analysis
+Finding relation ship and assigning details for auto/man
+```{r   echo=FALSE}
+mtcars$am<- factor(mtcars$am,labels = c('auto','manu'))
+t.test(mtcars$mpg~mtcars$am)
+
+```
+## Difference between automatic and manual transmissions
++ multivariate linear regression.
++ stepwise regression.
+```{r echo=FALSE}
+stepmodel = step(lm(data = mtcars, mpg ~ .),trace=0,steps=10000)
+summary(stepmodel)
+model <- lm(mpg~ factor(am):wt + factor(am):qsec,data=mtcars)
+summary(model)
+```
+The results suggests that the best model includes cyl6, cyl8, hp, wt, and amManual variables. About 86.59% of the variance is explained by this model. Cylinders change negatively with mpg (-3.03miles and -2.16miles for cyl6 and cyl8 respectively), so do with horsepower (-0.03miles), and weight (-2.5miles for every 1,000lb). On the other hand, manual transmission is 1.81mpg better than automatic transmission.
+
+Residual plots seems to be randomly scattered, and some transformation may be needed for linearity
+
+##Conclusion
+
+On average, manual transmission is better than automatic transmission by 1.81mpg. However, transmission type is not the only factor accounting for MPG, cylinders, horsepower, and weitght are the important factors in affecting the MPG.
+
+
+## APPX 1
+```{r echo=FALSE}
+pairs(mtcars)
+```
+
+## APPX 2
+```{r echo=FALSE}
+boxplot(mpg~am, data = mtcars,
+        xlab = "Transmission",
+        ylab = "Miles per Gallon",
+        main = "MPG by Transmission Type")
+```
+
+## APPX 3
+```{r  echo=FALSE}
+plot(model)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
